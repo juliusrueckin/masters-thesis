@@ -14,17 +14,17 @@ Investigation and understanding of nonlinear dynamic systems is crucial in a wid
 
 1. Problem Statement
 2. From Symbolic Dynamics to Representations of Dynamic Systems
-  1. Shift Spaces
-  2. Shifts of Finite Type
-  3. Sofic Shifts
-  4. From Dynamic Systems to Markov Partitions and Shifts of Finite Type
+    1. Shift Spaces
+    2. Shifts of Finite Type
+    3. Sofic Shifts
+    4. From Dynamic Systems to Markov Partitions and Shifts of Finite Type
 3. From Differential Geometry to Markov Partitions and Symbolic Dynamics
-  1. Topological Universality of Toral Endomorphisms
-  2. Geodesic Flows and Geodesic Universality
-  3. Locally Split Anosov-Smale Hyperbolic Systems
-  4. On Differential Geometry and Symbolic Dynamics
-  5. On Differential Geometry and Markov Partitions
+    1. Topological Universality of Toral Endomorphisms
+    2. Geodesic Flows and Geodesic Universality
+    3. Locally Split Anosov-Smale Hyperbolic Systems
+    4. On Differential Geometry and Symbolic Dynamics
+    5. On Differential Geometry and Markov Partitions
 4. Construction of MDP Representations for Dynamic Systems
-  1. Implementation of Markov Partitions for a Toy Exmaple
-  2. From Markov Partitions to Markov Decision Processes
+    1. Implementation of Markov Partitions for a Toy Exmaple
+    2. From Markov Partitions to Markov Decision Processes
 5. Related Work
