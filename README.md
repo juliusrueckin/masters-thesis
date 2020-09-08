@@ -26,5 +26,6 @@ Investigation and understanding of nonlinear dynamic systems is crucial in a wid
     5. On Differential Geometry and Markov Partitions
 4. Construction of MDP Representations for Dynamic Systems
     1. Implementation of Markov Partitions for a Toy Exmaple
-    2. From Markov Partitions to Markov Decision Processes
+    2. Algorithmic Construction of Markov Partitions
+    3. From Markov Partitions to Markov Decision Processes
 5. Related Work
