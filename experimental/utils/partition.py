@@ -1,9 +1,9 @@
-from typing import Union, Optional
+from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
+from experimental.utils.dynamic_system import DynamicSystem
 from shapely.geometry import MultiLineString, Point, MultiPoint
-from utils.dynamic_sytem import DynamicSystem
 
 
 class Partition:
@@ -56,7 +56,17 @@ class Partition:
 
         return intersection_points[msk][0]
 
-    def compute_partition(self, fixed_point: np.array, num_iters: int, delta: float):
+    def compute_partition(self, fixed_point: np.array, num_iters: int, delta: float) -> Tuple[Optional[Dict], Optional[List]]:
+        if self.dynamic_system.fixed_point is None:
+            if self.dynamic_system.compute_fixed_point() is None:
+                print(f"Failed calculating a partition, since no fixed point found.")
+
+        if not self.dynamic_system.is_fixed_point(self.dynamic_system.fixed_point):
+            print(f"Failed calculating a partition, since calculated fixed point is not a real fixed point.")
+
+        if not self.dynamic_system.fixed_point_is_hyperbolic():
+            print(f"Failed calculating a partition, since fixed point is not a hyperbolic one.")
+
         branches = {"W_u1": [[fixed_point]], "W_u2": [[fixed_point]], "W_s1": [[fixed_point]], "W_s2": [[fixed_point]]}
         unstable_branches = ["W_u1", "W_u2"]
         stable_branches = ["W_s1", "W_s2"]
