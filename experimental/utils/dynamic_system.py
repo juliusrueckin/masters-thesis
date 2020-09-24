@@ -28,7 +28,7 @@ class DynamicSystem:
     def fixed_point_jacobian(self, x: np.array) -> np.array:
         return self.d_phi(x) - np.identity(n=2)
 
-    def compute_fixed_point(self, init_x: np.array=np.array([4, 4])) -> np.array:
+    def compute_fixed_point(self, init_x: np.array = np.array([4, 4])) -> np.array:
         root_sol = optimize.root(self.fixed_point_objective_func, init_x, jac=self.fixed_point_jacobian, method="lm")
         if not root_sol.success:
             print(f"Failed to find a fixed point. Error: {root_sol.message}")

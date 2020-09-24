@@ -24,11 +24,11 @@ class Partition:
         msk = eig_vals < 1
         return eig_vects[msk][0]
 
-    def wt_s(self, last_wt_s: np.array, delta: float=10e-3, reverse_direction: bool=False) -> np.array:
+    def wt_s(self, last_wt_s: np.array, delta: float = 10e-3, reverse_direction: bool = False) -> np.array:
         direction_sign = 1 if not reverse_direction else -1
         return last_wt_s + direction_sign * delta * self.compute_stable_eigenspace(last_wt_s)
 
-    def wt_u(self, last_wt_u: np.array, delta: float=10e-3, reverse_direction: bool=False) -> np.array:
+    def wt_u(self, last_wt_u: np.array, delta: float = 10e-3, reverse_direction: bool = False) -> np.array:
         direction_sign = 1 if not reverse_direction else -1
         return last_wt_u + direction_sign * delta * self.compute_unstable_eigenspace(last_wt_u)
 
@@ -42,7 +42,9 @@ class Partition:
             return np.array(intersection_points).shape[0]
 
     @staticmethod
-    def get_new_intersection_point(intersection_points: np.array, num_intersections: int, overall_intersection_points: np.array) -> Optional[np.array]:
+    def get_new_intersection_point(
+        intersection_points: np.array, num_intersections: int, overall_intersection_points: np.array
+    ) -> Optional[np.array]:
         if num_intersections == 1:
             return intersection_points
 
@@ -72,10 +74,20 @@ class Partition:
             print(f"Failed calculating a partition, since fixed point is not a hyperbolic one.")
             return None, None
 
-        branches = {"W_u1": [[self.dynamic_system.fixed_point]], "W_u2": [[self.dynamic_system.fixed_point]], "W_s1": [[self.dynamic_system.fixed_point]], "W_s2": [[self.dynamic_system.fixed_point]]}
+        branches = {
+            "W_u1": [[self.dynamic_system.fixed_point]],
+            "W_u2": [[self.dynamic_system.fixed_point]],
+            "W_s1": [[self.dynamic_system.fixed_point]],
+            "W_s2": [[self.dynamic_system.fixed_point]],
+        }
         unstable_branches = ["W_u1", "W_u2"]
         stable_branches = ["W_s1", "W_s2"]
-        approx_funcs = {"W_u1": (self.wt_u, True), "W_u2": (self.wt_u, False), "W_s1": (self.wt_s, True), "W_s2": (self.wt_s, False)}
+        approx_funcs = {
+            "W_u1": (self.wt_u, True),
+            "W_u2": (self.wt_u, False),
+            "W_s1": (self.wt_s, True),
+            "W_s2": (self.wt_s, False),
+        }
         overall_intersection_points = []
 
         for i in range(num_iters):
@@ -102,17 +114,25 @@ class Partition:
                     for stable_branch in stable_branches:
                         if unstable_branch in stopped_branches and stable_branch in stopped_branches:
                             continue
-                        intersection_points = MultiLineString(branches[unstable_branch]).intersection(MultiLineString(branches[stable_branch]))
+                        intersection_points = MultiLineString(branches[unstable_branch]).intersection(
+                            MultiLineString(branches[stable_branch])
+                        )
                         intersection_points = intersection_points.difference(Point(self.dynamic_system.fixed_point))
                         num_intersections = self.get_num_of_intersections(intersection_points)
 
                         if num_intersections > i:
-                            intersection_point = self.get_new_intersection_point(np.array(intersection_points), num_intersections, np.array(overall_intersection_points))
+                            intersection_point = self.get_new_intersection_point(
+                                np.array(intersection_points), num_intersections, np.array(overall_intersection_points)
+                            )
                             if intersection_point is None:
-                                    continue
+                                continue
 
-                            dist_unstable = np.linalg.norm(np.array(intersection_point) - branches[unstable_branch][-1][-1], ord=2)
-                            dist_stable = np.linalg.norm(np.array(intersection_point) - branches[stable_branch][-1][-1], ord=2)
+                            dist_unstable = np.linalg.norm(
+                                np.array(intersection_point) - branches[unstable_branch][-1][-1], ord=2
+                            )
+                            dist_stable = np.linalg.norm(
+                                np.array(intersection_point) - branches[stable_branch][-1][-1], ord=2
+                            )
                             latter_branch = unstable_branch if dist_unstable < dist_stable else stable_branch
                             if latter_branch not in stopped_branches:
                                 stopped_branches.append(latter_branch)
@@ -125,7 +145,7 @@ class Partition:
 
     def plot_partition(self):
         m_id = self.dynamic_system.m_id
-        unit_square = np.array([[0,0], [0,m_id], [m_id,m_id], [m_id,0], [0,0]])
+        unit_square = np.array([[0, 0], [0, m_id], [m_id, m_id], [m_id, 0], [0, 0]])
         plt.plot(unit_square[:, 0], unit_square[:, 1], "r-")
 
         for branch in self.branches.keys():
