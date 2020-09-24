@@ -1,7 +1,9 @@
-experimental/.ipynb_checkpoints/
+*.ipynb_checkpoints*
 organizational/
 papers/
 project_plan/
 templates/
 thesis/
 .idea/
+*__pycache__*
+*.env

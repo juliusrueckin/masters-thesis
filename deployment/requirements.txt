@@ -1,0 +1,7 @@
+jupyterlab==1.2.1
+numpy==1.17.3
+pandas==0.25.3
+scipy==1.5.2
+matplotlib==3.3.2
+typing==3.7.4.3
+Shapely==1.7.1

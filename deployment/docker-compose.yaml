@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+    experimental_container:
+        build: .
+        ports:
+            - 127.0.0.1:8890:8890
+        volumes:
+            - ${MA_REPO_DIR}:/ma_project
+        environment:
+            - PYTHON_LOG_LEVEL=DEBUG
+            - PYTHON_LOG_FORMAT=SHORT_PATH
+        # run jupyter lab locally
+        command: "jupyter lab --port=8890 --ip=0.0.0.0 --allow-root --no-browser --NotebookApp.custom_display_url=http://localhost:8890 --NotebookApp.notebook_dir=/ma_project"
