@@ -1,4 +1,4 @@
-# On the Combination of SymbolicDynamics and Dynamic Programmingfor Dynamic Systems
+# On the Combination of SymbolicDynamics and Dynamic Programming for Dynamic Systems
 
 ## Master’s Thesis - TU Munich - Chair of Data Processing
 
