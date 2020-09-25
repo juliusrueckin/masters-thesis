@@ -31,3 +31,10 @@ Investigation and understanding of nonlinear dynamic systems is crucial in a wid
     2. Algorithmic Construction of Markov Partitions
     3. From Markov Partitions to Markov Decision Processes
 5. Related Work
+
+## Execution of Pipeline
+
+1. `cd deployment/`
+2. `docker-compose build`
+3. `docker-compose up`
+4. Open jupyterlab link printed in terminal in a browser of your choice and start exploring the notebooks
