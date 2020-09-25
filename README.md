@@ -32,7 +32,7 @@ Investigation and understanding of nonlinear dynamic systems is crucial in a wid
     3. From Markov Partitions to Markov Decision Processes
 5. Related Work
 
-## Execution of Pipeline
+### Execution of Pipeline
 
 1. `cd deployment/`
 2. `docker-compose build`
