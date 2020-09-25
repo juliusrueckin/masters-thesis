@@ -10,6 +10,7 @@ Investigation and understanding of nonlinear dynamic systems is crucial in a wid
 
 - [experimental/notebooks](https://github.com/juliusrueckin/masters-thesis/tree/master/experimental/notebooks) contains jupyter notebooks providing code for applying proposed algorithms, implemented toy examples and executed experiments
 - [experimental/utils](https://github.com/juliusrueckin/masters-thesis/tree/master/experimental/utils) contains wrappers for frequently used code, proposed algorithmic computations such as hyperbolic fixed point computations and developed algorithms for constructions of Markov partitions
+- [deployment/](https://github.com/juliusrueckin/masters-thesis/tree/master/deployment) contains everything needed for a docker-compose setup of the whole pipeline
 
 ### Thesis Structure
 
