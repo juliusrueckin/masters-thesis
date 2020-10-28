@@ -225,8 +225,12 @@ class Partition:
                             if intersection_point is None:
                                 continue
 
-                            dist_unstable = self.euclidean_dist_over_torus(np.array(intersection_point), branches[unstable_branch][-1][-1])
-                            dist_stable = self.euclidean_dist_over_torus(np.array(intersection_point), branches[stable_branch][-1][-1])
+                            dist_unstable = self.euclidean_dist_over_torus(
+                                np.array(intersection_point), branches[unstable_branch][-1][-1]
+                            )
+                            dist_stable = self.euclidean_dist_over_torus(
+                                np.array(intersection_point), branches[stable_branch][-1][-1]
+                            )
 
                             latter_branch = unstable_branch if dist_unstable < dist_stable else stable_branch
                             if latter_branch not in stopped_branches:
@@ -238,7 +242,7 @@ class Partition:
         self.intersection_points = overall_intersection_points
         return self.branches, self.intersection_points
 
-    def euclidean_dist_over_torus(self, x: np.array, y:np.array) -> float:
+    def euclidean_dist_over_torus(self, x: np.array, y: np.array) -> float:
         """
         Compute euclidean distance between two points over the torus. Not equivalent to the euclidean distance
         over the plane, since identification at the edges of the unit square needs to be considered as
@@ -252,7 +256,13 @@ class Partition:
             (float): distance between x and y over the torus
         """
         one_vec = np.ones(x.shape[0]) * self.dynamic_system.m_id
-        return np.min([np.linalg.norm(x-y, ord=2), np.linalg.norm(x-y-one_vec, ord=2), np.linalg.norm(x-y+one_vec, ord=2)])
+        return np.min(
+            [
+                np.linalg.norm(x - y, ord=2),
+                np.linalg.norm(x - y - one_vec, ord=2),
+                np.linalg.norm(x - y + one_vec, ord=2),
+            ]
+        )
 
     def plot_partition(self):
         """

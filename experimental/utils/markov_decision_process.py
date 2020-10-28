@@ -22,7 +22,9 @@ class MarkovDecisionProcess:
         self.dynamic_system = dynamic_system
         self.markov_partition = markov_partition
 
-    def estimate_probability_matrix_algo5(self, c: int = 100, tau: float = 0.001, max_sample_trials: int = 1000) -> np.array:
+    def estimate_probability_matrix_algo5(
+        self, c: int = 100, tau: float = 0.001, max_sample_trials: int = 1000
+    ) -> np.array:
         """
         Implementation of Algorithm 5 presented in the thesis. Monte Carlo method to estimate state
         transition probability matrix for each subset of the partition separately, so no random walk
@@ -50,7 +52,7 @@ class MarkovDecisionProcess:
                 k = self.get_subset_index_of_point(next_p)
                 assert k is not None, f"Error: Cannot find respective subset of {p}"
                 C[i, k] += 1
-                samples += + 1
+                samples += +1
                 if samples % c == 0:
                     P_old[i, :] = P[i, :]
                     P[i, :] = C[i, :] / np.linalg.norm(C[i, :], ord=1)
@@ -58,7 +60,7 @@ class MarkovDecisionProcess:
         return P
 
     @staticmethod
-    def sample_uniform_random_point(area: MultiPolygon, max_sample_trials: int=1000) -> Optional[Point]:
+    def sample_uniform_random_point(area: MultiPolygon, max_sample_trials: int = 1000) -> Optional[Point]:
         """
         Try to sample a point uniform at random over an arbitrary polygon shape by uniformly sampling
         from its covering rectangle. Exit, if it takes more than max_sample_trials.
