@@ -22,7 +22,9 @@ class MarkovDecisionProcess:
         self.dynamic_system = dynamic_system
         self.markov_partition = markov_partition
 
-    def estimate_probability_matrix_algo3(self, l: int = 100, m: int = 1000, max_sample_trials: int = 1000) -> np.array:
+    def estimate_probability_matrix_random_walker_method(
+        self, l: int = 100, m: int = 1000, max_sample_trials: int = 1000
+    ) -> np.array:
         """
         Implementation of Algorithm 3 presented in the thesis. Monte Carlo method to estimate state
         transition probability matrix by executing m random walks of length l. Motivated by particle
@@ -72,7 +74,7 @@ class MarkovDecisionProcess:
 
         return C
 
-    def estimate_probability_matrix_algo5(
+    def estimate_probability_matrix_pi_method(
         self, c: int = 100, tau: float = 0.001, max_sample_trials: int = 1000
     ) -> np.array:
         """
@@ -146,3 +148,31 @@ class MarkovDecisionProcess:
             if point.intersects(self.markov_partition[k]):
                 return k
         return None
+
+    def ground_truth_probability_matrix(self, markov_partition_phi: List[MultiPolygon]) -> np.array:
+        """
+        If a partition of one-time applied dynamics to the original Markov partition is available,
+        we produce ground truth for the probability estimate by calculating areas of intersection
+        between states in self.markov_partition and markov_partition_phi.
+
+        Args:
+            markov_partition_phi: partition of one-time applied dynamics to the original Markov partition
+
+        Returns:
+            (np.array): exact state transition probability matrix under certain system/agent dynamics
+        """
+        n = len(self.markov_partition)
+        intersection_area_mat = np.zeros((n, n))
+
+        for i in range(n):
+            for j in range(n):
+                area_of_intersection = markov_partition_phi[i].intersection(self.markov_partition[j]).area
+                if area_of_intersection < 10e-8:
+                    area_of_intersection = 0
+                intersection_area_mat[i, j] = area_of_intersection
+
+        probability_mat = np.zeros((n, n))
+        for i in range(n):
+            probability_mat[i, :] = intersection_area_mat[i, :] / np.linalg.norm(intersection_area_mat[i, :], ord=1)
+
+        return probability_mat
