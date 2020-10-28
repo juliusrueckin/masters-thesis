@@ -22,13 +22,64 @@ class MarkovDecisionProcess:
         self.dynamic_system = dynamic_system
         self.markov_partition = markov_partition
 
+    def estimate_probability_matrix_algo3(self, l: int = 100, m: int = 1000, max_sample_trials: int = 1000) -> np.array:
+        """
+        Implementation of Algorithm 3 presented in the thesis. Monte Carlo method to estimate state
+        transition probability matrix by executing m random walks of length l. Motivated by particle
+        simulations and graph-theoretic arguments of shifts of finite type.
+
+        Args:
+            l (int): length/number of steps of one random walk
+            m (int): number of executed random walks
+            max_sample_trials (int): maximal number of trials to uniformly sample a point in a subset
+
+        Returns:
+            (np.array): estimated state transition probability matrix under certain system/agent dynamics
+        """
+        n = len(self.markov_partition)
+        P = np.zeros((n, n))
+        C = self.execute_random_walks(l, m, max_sample_trials)
+        for i in range(n):
+            P[i, :] = C[i, :] / np.linalg.norm(C[i, :], ord=1)
+
+        return P
+
+    def execute_random_walks(self, l: int = 100, m: int = 1000, max_sample_trials: int = 1000) -> np.array:
+        """
+        Args:
+            l (int): length/number of steps of one random walk
+            m (int): number of executed random walks
+            max_sample_trials (int): maximal number of trials to uniformly sample a point in a subset
+
+        Returns:
+            (np.array): count matrix for random walker's state transitions from subsets i to k
+        """
+        n = len(self.markov_partition)
+        C = np.zeros((n, n))
+        num_walks = 0
+
+        while num_walks < m:
+            num_steps = 0
+            i = np.random.randint(low=0, high=n)
+            while num_steps < l:
+                p = self.sample_uniform_random_point(self.markov_partition[i], max_sample_trials)
+                next_p = Point(self.dynamic_system.phi(p))
+                k = self.get_subset_index_of_point(next_p)
+                C[i, k] += 1
+                i = k
+                num_steps += 1
+            num_walks += 1
+
+        return C
+
     def estimate_probability_matrix_algo5(
         self, c: int = 100, tau: float = 0.001, max_sample_trials: int = 1000
     ) -> np.array:
         """
         Implementation of Algorithm 5 presented in the thesis. Monte Carlo method to estimate state
         transition probability matrix for each subset of the partition separately, so no random walk
-        is performed. Additionally, parameters c and tau approximately detect convergence.
+        is performed. Additionally, parameters c and tau approximately detect convergence. Motivated
+        by the classical Monte Carlo algorithm to estimate pi by approximating the disk's area.
 
         Args:
             c (int): number of sample steps after which we update the probability estimate
