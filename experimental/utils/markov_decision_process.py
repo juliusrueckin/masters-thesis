@@ -42,7 +42,10 @@ class MarkovDecisionProcess:
         P = np.zeros((n, n))
         C = self.execute_random_walks(l, m, max_sample_trials)
         for i in range(n):
-            P[i, :] = C[i, :] / np.linalg.norm(C[i, :], ord=1)
+            if np.linalg.norm(C[i, :], ord=1) > 0:
+                P[i, :] = C[i, :] / np.linalg.norm(C[i, :], ord=1)
+            else:
+                P[i, :] = 0
 
         return P
 
