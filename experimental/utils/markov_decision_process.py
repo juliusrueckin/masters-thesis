@@ -1,7 +1,9 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import numpy as np
+import os
 from shapely.geometry import MultiPolygon, Point
+from multiprocessing import Pool
 
 from experimental.utils.dynamic_system import DynamicSystem
 
@@ -40,7 +42,26 @@ class MarkovDecisionProcess:
         """
         n = len(self.markov_partition)
         P = np.zeros((n, n))
-        C = self.execute_random_walks(l, m, max_sample_trials)
+        C = np.zeros((n, n))
+
+        num_workers = np.minimum(os.cpu_count(), n)
+        distributed_rand_walks = 0
+        m_chunk = np.ceil(m / num_workers)
+        random_walks_params = []
+        for i in range(num_workers):
+            if distributed_rand_walks + m_chunk < m:
+                random_walks_params.append((l, m_chunk, max_sample_trials))
+                distributed_rand_walks += m_chunk
+            else:
+                random_walks_params.append((l, m - distributed_rand_walks, max_sample_trials))
+                break
+
+        with Pool(processes=num_workers) as pool:
+            count_matrices = pool.starmap(self.execute_random_walks, random_walks_params)
+
+        for count_matrix in count_matrices:
+            C += count_matrix
+
         for i in range(n):
             if np.linalg.norm(C[i, :], ord=1) > 0:
                 P[i, :] = C[i, :] / np.linalg.norm(C[i, :], ord=1)
@@ -77,6 +98,42 @@ class MarkovDecisionProcess:
 
         return C
 
+    def estimate_probabilities_of_state(
+        self, i: int, c: int, tau: float, max_sample_trials: int
+    ) -> Tuple[int, np.array]:
+        """
+        Estimate transition probabilities given agent is in state with index i.
+
+        Args:
+            i (int): index of subset/state in Markov partition
+            c (int): number of sample steps after which we update the probability estimate
+            tau (float): threshold for update difference that approximately indicates converge
+            max_sample_trials (int): maximal number of trials to uniformly sample a point in a subset
+
+        Returns:
+            i (int): index of subset/state in Markov partition
+            (np.array): transition probabilities given agent is in state with index i
+        """
+        n = len(self.markov_partition)
+        P = np.zeros(n)
+        P_old = np.ones(n)
+        C = np.zeros(n)
+        samples = 0
+
+        while np.max(np.abs(P - P_old)) >= tau:
+            p = self.sample_uniform_random_point(self.markov_partition[i], max_sample_trials)
+            assert p is not None, f"Error: Did not find "
+            next_p = Point(self.dynamic_system.phi(p))
+            k = self.get_subset_index_of_point(next_p)
+            assert k is not None, f"Error: Cannot find respective subset of {p}"
+            C[k] += 1
+            samples += +1
+            if samples % c == 0:
+                P_old = P
+                P = C / np.linalg.norm(C, ord=1)
+
+        return i, P
+
     def estimate_probability_matrix_pi_method(
         self, c: int = 100, tau: float = 0.001, max_sample_trials: int = 1000
     ) -> np.array:
@@ -96,22 +153,16 @@ class MarkovDecisionProcess:
         """
         n = len(self.markov_partition)
         P = np.zeros((n, n))
-        P_old = np.ones((n, n))
-        C = np.zeros((n, n))
 
-        for i in range(n):
-            samples = 0
-            while np.max(np.abs(P[i, :] - P_old[i, :])) >= tau:
-                p = self.sample_uniform_random_point(self.markov_partition[i], max_sample_trials)
-                assert p is not None, f"Error: Did not find "
-                next_p = Point(self.dynamic_system.phi(p))
-                k = self.get_subset_index_of_point(next_p)
-                assert k is not None, f"Error: Cannot find respective subset of {p}"
-                C[i, k] += 1
-                samples += +1
-                if samples % c == 0:
-                    P_old[i, :] = P[i, :]
-                    P[i, :] = C[i, :] / np.linalg.norm(C[i, :], ord=1)
+        state_params = [(i, c, tau, max_sample_trials) for i in range(n)]
+        num_workers = np.minimum(os.cpu_count(), n)
+
+        with Pool(processes=num_workers) as pool:
+            transition_prob_results = pool.starmap(self.estimate_probabilities_of_state, state_params)
+
+        for transition_prob_result in transition_prob_results:
+            i, transition_probs = transition_prob_result
+            P[i, :] = transition_probs
 
         return P
 
