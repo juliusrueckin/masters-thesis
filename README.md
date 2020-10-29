@@ -18,23 +18,29 @@ In this thesis, we successfully fuse the branches symbolic dynamics and ADP resu
 
 ### Thesis Structure
 
-1. Problem Statement
-2. From Symbolic Dynamics to Representations of Dynamic Systems
+1. Introduction
+2. On Symbolic Dynamics for Representations of Dynamic Systems
     1. Shift Spaces
     2. Shifts of Finite Type
-    3. Sofic Shifts
-    4. From Dynamic Systems to Markov Partitions and Shifts of Finite Type
-3. From Differential Geometry to Markov Partitions and Symbolic Dynamics
+    3. From Dynamic Systems to Shifts of Finite Type
+3. From Dynamic Systems to Markov Partitions and Symbolic Dynamics
     1. Topological Universality of Toral Endomorphisms
-    2. Geodesic Flows and Geodesic Universality
-    3. Locally Split Anosov-Smale Hyperbolic Systems
-    4. On Differential Geometry and Symbolic Dynamics
-    5. On Differential Geometry and Markov Partitions
-4. Construction of MDP Representations for Dynamic Systems
+    2. Locally Split Anosov-Smale Hyperbolic Systems
+    3. From Differentiable to Combinatorial Systems
+    4. On Markov Partitions to Construct Symbolic Systems
+4. Algorithmic Construction of Markov Partitions
     1. Implementation of Markov Partitions for a Toy Exmaple
     2. Algorithmic Construction of Markov Partitions
-    3. From Markov Partitions to Markov Decision Processes
-5. Related Work
+5. From Markov Partitions to Markov Decision Processes
+6. Experiments and Applications
+    1. Experiments - Monte Carlo Algorithms
+    2. Experiments - Dynamic Programming Algorithms
+    3. Discussion of Real-World Applications
+7. Related Work
+    1. Origins in the Theory of Dynamic Systems
+    2. Symbolic Dynamics and Markov Partitions
+    3. Representation Learning in Dynamic Programming
+8. Conclusion and Future Work
 
 ### Execution of Pipeline
 
