@@ -4,7 +4,11 @@
 
 ### Abstract
 
-Investigation and understanding of nonlinear dynamic systems is crucial in a widespread variety of applications and fields of research, e.g.  describing chaotic sys-tems in physics [13], comprehend bio-molecular processes for designing new me-dial drugs [3], in engineering as for developing new high performance materials [18]or even in computer science with applications for encryption algorithms [5].  At thesame time, the dynamics of such systems evolving over time are notoriously hardto represent, although differential equations to describe such systems are in somecases well-known. A common tool for analyzing dynamic behavior over time are dy-namic simulations [3]. Nevertheless, these techniques often suffer from a very highdimensional data space resulting in an enormous effort to create suitable dimen-sionality reduction methods helping researchers to find Markov state models (MSM)describing the system’s dynamics over time in an aggregated fashion [12] [16].Hence,  we investigate mathematical more convenient methods to describe dy-namic systems and their markovian dynamics.  A promising branch of mathemat-ics, called symbolic dynamics [14], evolved a few decades ago, unites rigorous andwell-studied ideas of algebraic topology analyzing topological spaces and endomor-phisms on such spaces with naturally arising and comprehensible methods of au-tomata and graph theory. Thus, symbolic dynamics provides a generally applicableand at the same time mathematical well-studied framework to describe dynamic sys-tems without suffering from tedious engineering work trying to approximate Markovstate models by complex dimensionality reduction methods.Moreover, deriving such Markov models for dynamic systems is not only useful toaggregate dynamics over time, but also makes the broad class of dynamic systemseasily  accessible  for  algorithmic  treatment  of  optimal  sequential  decision  makingproblems.  Being able to construct such Markov state models in a rigorous fashionfor dynamic systems allows for applications of approximate dynamic programming(ADP) algorithms solving such optimal control problems in an efficient way [6].Thus, in this thesis, we aim for an extensive study of the fusion of symbolic dy-namics and ADP, such that the mathematical generality of both frameworks lead toan overall combined methodology making nonlinear dynamic systems accessible tothe powerful class of ADP algorithms.  This approach circumvents the problem ofloosing mathematical exactness, e.g. by hand-engineered dimensionality reductiontechniques, but rather leverages symbolic dynamics as a rigorous mathematical toolto precisely describe nonlinear dynamic systems for ADP applications.
+Investigation and understanding of nonlinear dynamic systems is crucial in a widespread variety of applications and fields of research, e.g.  describing chaotic systems  in  physics  [31],  comprehend  bio-molecular  processes  for  designing  newmedial drugs [4] or in engineering as for developing new high performance materials [51].  At the same time, the global dynamics of such systems are notoriouslyhard  to  represent,  although  differential  equations  to  describe  such  systems  arein some cases well-known.   A common tool for analyzing dynamic behavior overtime are dynamic simulations [19].  However, these techniques often suffer from avery high dimensional data space resulting in an enormous effort to create suitabledimensionality reduction methods [30] [48].
+
+Hence,  we investigate a generally applicable and efficient tool to describe andanalyze  complex  dynamic  systems,  namely  symbolic  dynamics  [42].   We  derivesuch  symbolic  dynamic  systems  by  representing  the  phase  spaces  as  partitionsendowed with the Markov property, called Markov partitions. Such phase space discretizations are not only useful to analyze global dynamics, but also make the broadclass of dynamic systems accessible to algorithmic treatment of optimal sequentialdecision making problems in such environments. Thus, we bridge a substantial gapin research work of symbolic dynamics and develop algorithms to construct suchMarkov partitions in an automated fashion for various dynamic systems.  Further,we formalize and examine a framework to build Markov decision processes (MDP)for dynamic systems based on Markov partitions.  We show how to fuse our workwith the rich tool of approximate dynamic programming (ADP) and apply this fusedframework in experiments executed in dynamic system environments.
+
+In this thesis, we successfully fuse the branches symbolic dynamics and ADP resulting in a mathematically well-defined method to derive MDPs relying on the statespace representations given by Markov partitions.  At its heart, we develop an algorithmic method to construct such Markov partitions in a computer by extendingresearch work of [22].  Moreover, our experiments give evidence for similar performance in some ADP settings for dynamic systems compared to regular state spacediscretizations. However, we also experience mathematically inherit limits while constructing Markov partitions for a broad class of dynamic systems.  Further, it is notyet clear how to fully transport the desirable mathematical properties of Markov partitions beyond the application to some fixed policy evaluation step.
 
 ### Project Structure
 
@@ -14,23 +18,29 @@ Investigation and understanding of nonlinear dynamic systems is crucial in a wid
 
 ### Thesis Structure
 
-1. Problem Statement
-2. From Symbolic Dynamics to Representations of Dynamic Systems
+1. Introduction
+2. On Symbolic Dynamics for Representations of Dynamic Systems
     1. Shift Spaces
     2. Shifts of Finite Type
-    3. Sofic Shifts
-    4. From Dynamic Systems to Markov Partitions and Shifts of Finite Type
-3. From Differential Geometry to Markov Partitions and Symbolic Dynamics
+    3. From Dynamic Systems to Shifts of Finite Type
+3. From Dynamic Systems to Markov Partitions and Symbolic Dynamics
     1. Topological Universality of Toral Endomorphisms
-    2. Geodesic Flows and Geodesic Universality
-    3. Locally Split Anosov-Smale Hyperbolic Systems
-    4. On Differential Geometry and Symbolic Dynamics
-    5. On Differential Geometry and Markov Partitions
-4. Construction of MDP Representations for Dynamic Systems
+    2. Locally Split Anosov-Smale Hyperbolic Systems
+    3. From Differentiable to Combinatorial Systems
+    4. On Markov Partitions to Construct Symbolic Systems
+4. Algorithmic Construction of Markov Partitions
     1. Implementation of Markov Partitions for a Toy Exmaple
     2. Algorithmic Construction of Markov Partitions
-    3. From Markov Partitions to Markov Decision Processes
-5. Related Work
+5. From Markov Partitions to Markov Decision Processes
+6. Experiments and Applications
+    1. Experiments - Monte Carlo Algorithms
+    2. Experiments - Dynamic Programming Algorithms
+    3. Discussion of Real-World Applications
+7. Related Work
+    1. Origins in the Theory of Dynamic Systems
+    2. Symbolic Dynamics and Markov Partitions
+    3. Representation Learning in Dynamic Programming
+8. Conclusion and Future Work
 
 ### Execution of Pipeline
 
