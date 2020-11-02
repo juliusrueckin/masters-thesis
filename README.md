@@ -12,9 +12,16 @@ In this thesis, we successfully fuse the branches symbolic dynamics and ADP resu
 
 ### Project Structure
 
-- [experimental/notebooks](https://github.com/juliusrueckin/masters-thesis/tree/master/experimental/notebooks) contains jupyter notebooks providing code for applying proposed algorithms, implemented toy examples and executed experiments
-- [experimental/utils](https://github.com/juliusrueckin/masters-thesis/tree/master/experimental/utils) contains wrappers for frequently used code, proposed algorithmic computations such as hyperbolic fixed point computations and developed algorithms for constructions of Markov partitions
-- [deployment/](https://github.com/juliusrueckin/masters-thesis/tree/master/deployment) contains everything needed for a docker-compose setup of the whole pipeline
+- [experimental/notebooks](https://github.com/juliusrueckin/masters-thesis/tree/master/experimental/notebooks) contains jupyter notebooks providing code for applying implemented algorithms, toy examples and performed experiments
+    * _torus-toy-example-construction.ipynb_ contains the implementation of the construction work done in chapter 4.1
+    * _markov-partition-construction-algorithms.py.ipynb_ contains the algorithmic constructions done in chapter 4.2
+    * _monte-carlo-experiments.ipynb_ contains the Monte Carlo estimation algorithms experiment results evaluated in chapter 6.1
+    * _dynamic-programming-experiments.ipynb_ contains the DP-algorithm experiment results evaluated in chapter 6.2
+- [experimental/utils](https://github.com/juliusrueckin/masters-thesis/tree/master/experimental/utils) contains wrappers for frequently used code and proposed algorithms
+    * _dynamic_system.py_ is a wrapper for defining system dynamics and computing (hyperbolic) fixed points
+    * _partition.py_ is an implementation of the proposed Markov partition construction alogrithm in chapter chapter 4.2 given a dynamic system
+    * _markov_decision_process.py_ is a parallelized implementation of the proposed Monte Carlo estimation algorithms in chapter 5 given a Markov partition
+- [deployment/](https://github.com/juliusrueckin/masters-thesis/tree/master/deployment) contains everything required for a docker-compose setup of the whole pipeline
 
 ### Thesis Structure
 
