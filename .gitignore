@@ -4,6 +4,7 @@ papers/
 project_plan/
 templates/
 thesis/
+experimental/notebooks/results/
 .idea/
 *__pycache__*
 *.env
