@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
+import logging
 import numpy as np
 from experimental.utils.dynamic_system import DynamicSystem
 from shapely.geometry import MultiLineString, Point, MultiPoint
@@ -37,7 +38,7 @@ class Partition:
         """
         eig_vals, eig_vects = np.linalg.eig(self.dynamic_system.d_phi(x))
         eig_vects = np.transpose(eig_vects)
-        msk = eig_vals > 1
+        msk = np.abs(eig_vals) > 1
         return eig_vects[msk][0]
 
     def compute_stable_eigenspace(self, x: np.array):
@@ -54,7 +55,7 @@ class Partition:
         """
         eig_vals, eig_vects = np.linalg.eig(self.dynamic_system.d_phi(x))
         eig_vects = np.transpose(eig_vects)
-        msk = eig_vals < 1
+        msk = np.abs(eig_vals) < 1
         return eig_vects[msk][0]
 
     def wt_s(self, last_wt_s: np.array, delta: float = 10e-3, reverse_direction: bool = False) -> np.array:
