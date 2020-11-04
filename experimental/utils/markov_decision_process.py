@@ -20,6 +20,7 @@ class MarkovDecisionProcess:
         self,
         dynamic_system: DynamicSystem,
         markov_partition: List[MultiPolygon],
+        partition_vertices: List[List[np.array]] = None,
         target_state: np.array = None,
         gamma: float = 0.1,
     ):
@@ -27,11 +28,13 @@ class MarkovDecisionProcess:
         Args:
             dynamic_system (DynamicSystem): including functionality for calculating system dynamics
             markov_partition (list): of multipolygons defining the subsets of the Markov partitions
+            partition_vertices (list): list of vertices of each subset of the partition
             target_state (np.array): desired target state of agent in phase space
             gamma (float): discount factor of MDP
         """
         self.dynamic_system = dynamic_system
         self.markov_partition = markov_partition
+        self.partition_vertices = partition_vertices
         self.transition_prob_matrix = None
         self.gamma = gamma
         self.target_state = target_state
@@ -271,32 +274,22 @@ class MarkovDecisionProcess:
             ]
         )
 
-    def g1(self, x: np.array) -> float:
+    def g(self, state_idx: int) -> float:
         """
-        Continuous cost function g1 measuring distance between x and goal state.
+        Cost function g measuring the shortest distance between the center of subset i of the
+        partition and the target point over the torus.
 
         Args:
-            x (np.array): current point in phase space
+            state_idx (int): index of current state
 
         Returns:
-            (float): distance between x and goal state
+            (float): distance between center of subset i and target point
         """
-        return self.euclidean_dist_over_torus(x, self.target_state)
+        dists = []
+        for x in self.partition_vertices[state_idx]:
+            dists.append(self.euclidean_dist_over_torus(x, self.target_state))
 
-    def g2(self, x: np.array, delta: float = 0.05) -> float:
-        """
-        Non-continuous cost function g2 rewards agent, if it is delta-neighborhood of goal state,
-        else it penalizes the agent.
-
-        Args:
-            x (np.array): current point in phase space
-            delta (float): radius of neighborhood around goal state
-
-        Returns:
-
-        """
-        dist = self.euclidean_dist_over_torus(x, self.target_state)
-        return 2.0 if dist < delta else -10.0
+        return sum(dists) / len(dists)
 
     def policy_bellman_operator(self, V: np.array, state_idx: int, cost_func):
         """
@@ -312,7 +305,7 @@ class MarkovDecisionProcess:
         """
         return cost_func(state_idx) + self.gamma * np.sum(self.transition_prob_matrix[state_idx, :] * V)
 
-    def policy_evaluation(self, cost_func: callable, epsilon: float = 2 * np.finfo(float).eps):
+    def policy_evaluation(self, cost_func: callable, epsilon: float = 2 * np.finfo(float).eps) -> Tuple[np.array, int]:
         """
         Computes a policy evaluation step of the policy iteration algorithm. For all states, the
         expected long-term value of following the current policy from this state on is calculated.
@@ -324,13 +317,16 @@ class MarkovDecisionProcess:
         Returns:
             (np.array): expected value function while following the current policy
         """
-        cost_func = self.g2 if cost_func is None else cost_func
         n = len(self.markov_partition)
         V = np.ones(n)
         V_old = np.zeros(n)
+        num_iters = 0
 
         while np.max(np.abs(V_old - V)) > epsilon:
+            num_iters += 1
             V_old = copy.deepcopy(V)
 
             for state_idx in range(n):
                 V[state_idx] = self.policy_bellman_operator(V, state_idx, cost_func)
+
+        return V, num_iters
