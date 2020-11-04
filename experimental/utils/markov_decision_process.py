@@ -15,14 +15,20 @@ class MarkovDecisionProcess:
     presented in the thesis in order to estimate the state transition probability kernel.
     """
 
-    def __init__(self, dynamic_system: DynamicSystem, markov_partition: List[MultiPolygon]):
+    def __init__(
+        self, dynamic_system: DynamicSystem, markov_partition: List[MultiPolygon], target_state: np.array = None
+    ):
         """
         Args:
             dynamic_system (DynamicSystem): including functionality for calculating system dynamics
             markov_partition (list): of multipolygons defining the subsets of the Markov partitions
+            target_state (np.array): desired target state of agent in phase space
         """
         self.dynamic_system = dynamic_system
         self.markov_partition = markov_partition
+        self.target_state = target_state
+        if target_state is None:
+            self.target_state = self.dynamic_system.compute_fixed_point(init_x=np.array([0.5, 0.5]))
 
     def estimate_probability_matrix_random_walker_method(
         self, l: int = 100, m: int = 1000, max_sample_trials: int = 1000
@@ -230,3 +236,52 @@ class MarkovDecisionProcess:
             probability_mat[i, :] = intersection_area_mat[i, :] / np.linalg.norm(intersection_area_mat[i, :], ord=1)
 
         return probability_mat
+
+    def euclidean_dist_over_torus(self, x: np.array, y: np.array) -> float:
+        """
+        Compute euclidean distance between two points over the torus. Not equivalent to the euclidean distance
+        over the plane, since identification at the edges of the unit square needs to be considered as
+        potentially shorter paths between two points, even if their plane distance is large.
+
+        Args:
+            x (np.array): first point on the torus
+            y (np.array): second point on the torus
+
+        Returns:
+            (float): distance between x and y over the torus
+        """
+        one_vec = np.ones(x.shape[0]) * self.dynamic_system.m_id
+        return np.min(
+            [
+                np.linalg.norm(x - y, ord=2),
+                np.linalg.norm(x - y - one_vec, ord=2),
+                np.linalg.norm(x - y + one_vec, ord=2),
+            ]
+        )
+
+    def g1(self, x: np.array) -> float:
+        """
+        Continuous cost function g1 measuring distance between x and goal state.
+
+        Args:
+            x (np.array): current point in phase space
+
+        Returns:
+            (float): distance between x and goal state
+        """
+        return self.euclidean_dist_over_torus(x, self.target_state)
+
+    def g2(self, x: np.array, delta: float = 0.05) -> float:
+        """
+        Non-continuous cost function g2 rewards agent, if it is delta-neighborhood of goal state,
+        else it penalizes the agent.
+
+        Args:
+            x (np.array): current point in phase space
+            delta (float): radius of neighborhood around goal state
+
+        Returns:
+
+        """
+        dist = self.euclidean_dist_over_torus(x, self.target_state)
+        return 2.0 if dist < delta else -10.0
