@@ -16,16 +16,22 @@ class MarkovDecisionProcess:
     """
 
     def __init__(
-        self, dynamic_system: DynamicSystem, markov_partition: List[MultiPolygon], target_state: np.array = None
+        self,
+        dynamic_system: DynamicSystem,
+        markov_partition: List[MultiPolygon],
+        target_state: np.array = None,
+        gamma: float = 0.1,
     ):
         """
         Args:
             dynamic_system (DynamicSystem): including functionality for calculating system dynamics
             markov_partition (list): of multipolygons defining the subsets of the Markov partitions
             target_state (np.array): desired target state of agent in phase space
+            gamma (float): discount factor of MDP
         """
         self.dynamic_system = dynamic_system
         self.markov_partition = markov_partition
+        self.gamma = gamma
         self.target_state = target_state
         if target_state is None:
             self.target_state = self.dynamic_system.compute_fixed_point(init_x=np.array([0.5, 0.5]))
