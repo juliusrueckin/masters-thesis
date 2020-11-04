@@ -4,6 +4,7 @@ import numpy as np
 import os
 from shapely.geometry import MultiPolygon, Point
 from multiprocessing import Pool
+import copy
 
 from experimental.utils.dynamic_system import DynamicSystem
 
@@ -31,6 +32,7 @@ class MarkovDecisionProcess:
         """
         self.dynamic_system = dynamic_system
         self.markov_partition = markov_partition
+        self.transition_prob_matrix = None
         self.gamma = gamma
         self.target_state = target_state
         if target_state is None:
@@ -79,6 +81,8 @@ class MarkovDecisionProcess:
                 P[i, :] = C[i, :] / np.linalg.norm(C[i, :], ord=1)
             else:
                 P[i, :] = 0
+
+        self.transition_prob_matrix = P
 
         return P
 
@@ -175,6 +179,8 @@ class MarkovDecisionProcess:
         for transition_prob_result in transition_prob_results:
             i, transition_probs = transition_prob_result
             P[i, :] = transition_probs
+
+        self.transition_prob_matrix = P
 
         return P
 
@@ -291,3 +297,40 @@ class MarkovDecisionProcess:
         """
         dist = self.euclidean_dist_over_torus(x, self.target_state)
         return 2.0 if dist < delta else -10.0
+
+    def policy_bellman_operator(self, V: np.array, state_idx: int, cost_func):
+        """
+        Computes the expected value of following the policy in the current state.
+
+        Args:
+            V:
+            state_idx (int): index of current state in partition list
+            cost_func (callable): cost function g1 or g2
+
+        Returns:
+            (float): expected value of following the policy in the current state.
+        """
+        return cost_func(state_idx) + self.gamma * np.sum(self.transition_prob_matrix[state_idx, :] * V)
+
+    def policy_evaluation(self, cost_func: callable, epsilon: float = 2 * np.finfo(float).eps):
+        """
+        Computes a policy evaluation step of the policy iteration algorithm. For all states, the
+        expected long-term value of following the current policy from this state on is calculated.
+
+        Args:
+            cost_func (callable): cost function g1 or g2
+            epsilon (float): convergence threshold for expected value function over all states
+
+        Returns:
+            (np.array): expected value function while following the current policy
+        """
+        cost_func = self.g2 if cost_func is None else cost_func
+        n = len(self.markov_partition)
+        V = np.ones(n)
+        V_old = np.zeros(n)
+
+        while np.max(np.abs(V_old - V)) > epsilon:
+            V_old = copy.deepcopy(V)
+
+            for state_idx in range(n):
+                V[state_idx] = self.policy_bellman_operator(V, state_idx, cost_func)
