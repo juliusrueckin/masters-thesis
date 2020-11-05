@@ -119,7 +119,7 @@ class MarkovDecisionProcess:
 
     def estimate_probabilities_of_state(
         self, i: int, c: int, tau: float, max_sample_trials: int
-    ) -> Tuple[int, np.array]:
+    ) -> Tuple[int, np.array, int]:
         """
         Estimate transition probabilities given agent is in state with index i.
 
@@ -130,14 +130,16 @@ class MarkovDecisionProcess:
             max_sample_trials (int): maximal number of trials to uniformly sample a point in a subset
 
         Returns:
-            i (int): index of subset/state in Markov partition
+            (int): index of subset/state in Markov partition
             (np.array): transition probabilities given agent is in state with index i
+            (int): number of probability updates until convergence
         """
         n = len(self.markov_partition)
         P = np.zeros(n)
         P_old = np.ones(n)
         C = np.zeros(n)
         samples = 0
+        num_iters = 0
 
         while np.max(np.abs(P - P_old)) >= tau:
             p = self.sample_uniform_random_point(self.markov_partition[i], max_sample_trials)
@@ -148,14 +150,15 @@ class MarkovDecisionProcess:
             C[k] += 1
             samples += +1
             if samples % c == 0:
+                num_iters += 1
                 P_old = P
                 P = C / np.linalg.norm(C, ord=1)
 
-        return i, P
+        return i, P, num_iters
 
     def estimate_probability_matrix_pi_method(
         self, c: int = 100, tau: float = 0.001, max_sample_trials: int = 1000
-    ) -> np.array:
+    ) -> Tuple[np.array, np.array]:
         """
         Implementation of Algorithm 5 presented in the thesis. Monte Carlo method to estimate state
         transition probability matrix for each subset of the partition separately, so no random walk
@@ -169,6 +172,7 @@ class MarkovDecisionProcess:
 
         Returns:
             (np.array): estimated state transition probability matrix under certain system/agent dynamics
+            (np.array): number of iterates per state until convergence
         """
         n = len(self.markov_partition)
         P = np.zeros((n, n))
@@ -179,13 +183,15 @@ class MarkovDecisionProcess:
         with Pool(processes=num_workers) as pool:
             transition_prob_results = pool.starmap(self.estimate_probabilities_of_state, state_params)
 
+        num_iters_per_state = np.zeros(n)
         for transition_prob_result in transition_prob_results:
-            i, transition_probs = transition_prob_result
+            i, transition_probs, num_iters = transition_prob_result
+            num_iters_per_state[i] = num_iters
             P[i, :] = transition_probs
 
         self.transition_prob_matrix = P
 
-        return P
+        return P, num_iters_per_state
 
     @staticmethod
     def sample_uniform_random_point(area: MultiPolygon, max_sample_trials: int = 1000) -> Optional[Point]:
