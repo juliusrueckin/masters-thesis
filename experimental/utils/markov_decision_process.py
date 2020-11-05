@@ -1,10 +1,10 @@
-from typing import List, Optional, Tuple
+import copy
+import os
+from multiprocessing import Pool
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
-import os
 from shapely.geometry import MultiPolygon, Point
-from multiprocessing import Pool
-import copy
 
 from experimental.utils.dynamic_system import DynamicSystem
 
@@ -305,7 +305,9 @@ class MarkovDecisionProcess:
         """
         return cost_func(state_idx) + self.gamma * np.sum(self.transition_prob_matrix[state_idx, :] * V)
 
-    def policy_evaluation(self, cost_func: callable, epsilon: float = 2 * np.finfo(float).eps) -> Tuple[np.array, int]:
+    def policy_evaluation(
+        self, cost_func: callable, epsilon: float = 2 * np.finfo(float).eps,
+    ) -> Tuple[np.array, int, Dict]:
         """
         Computes a policy evaluation step of the policy iteration algorithm. For all states, the
         expected long-term value of following the current policy from this state on is calculated.
@@ -316,11 +318,14 @@ class MarkovDecisionProcess:
 
         Returns:
             (np.array): expected value function while following the current policy
+            (int): number of iterations until epsilon-convergence
+            (dict): L2- and max-distance between V_k and V_{k-1}, where k is current iteration
         """
         n = len(self.markov_partition)
         V = np.ones(n)
         V_old = np.zeros(n)
         num_iters = 0
+        convergence_info = {"avg_dist": [], "max_dist": []}
 
         while np.max(np.abs(V_old - V)) > epsilon:
             num_iters += 1
@@ -329,4 +334,7 @@ class MarkovDecisionProcess:
             for state_idx in range(n):
                 V[state_idx] = self.policy_bellman_operator(V, state_idx, cost_func)
 
-        return V, num_iters
+            convergence_info["avg_dist"].append(np.linalg.norm(V_old - V, ord=2))
+            convergence_info["max_dist"].append(np.max(np.abs(V_old - V)))
+
+        return V, num_iters, convergence_info
