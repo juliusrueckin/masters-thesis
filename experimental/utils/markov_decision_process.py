@@ -108,7 +108,7 @@ class MarkovDecisionProcess:
             i = np.random.randint(low=0, high=n)
             while num_steps < l:
                 p = self.sample_uniform_random_point(self.markov_partition[i], max_sample_trials)
-                next_p = Point(self.dynamic_system.phi(p))
+                next_p = Point(self.dynamic_system.phi(np.array(p)))
                 k = self.get_subset_index_of_point(next_p)
                 C[i, k] += 1
                 i = k
@@ -118,7 +118,7 @@ class MarkovDecisionProcess:
         return C
 
     def estimate_probabilities_of_state(
-        self, i: int, c: int, tau: float, max_sample_trials: int
+        self, i: int, c: int, tau: float, max_sample_trials: int, verbose: bool = False
     ) -> Tuple[int, np.array, int]:
         """
         Estimate transition probabilities given agent is in state with index i.
@@ -128,6 +128,7 @@ class MarkovDecisionProcess:
             c (int): number of sample steps after which we update the probability estimate
             tau (float): threshold for update difference that approximately indicates converge
             max_sample_trials (int): maximal number of trials to uniformly sample a point in a subset
+            verbose (bool): if True, log verbose error messages
 
         Returns:
             (int): index of subset/state in Markov partition
@@ -143,10 +144,16 @@ class MarkovDecisionProcess:
 
         while np.max(np.abs(P - P_old)) >= tau:
             p = self.sample_uniform_random_point(self.markov_partition[i], max_sample_trials)
-            assert p is not None, f"Error: Did not find "
-            next_p = Point(self.dynamic_system.phi(p))
+            if p is None and verbose:
+                print(f"Error: Did not sample a point for state {i}")
+                continue
+
+            next_p = Point(self.dynamic_system.phi(np.array(p)))
             k = self.get_subset_index_of_point(next_p)
-            assert k is not None, f"Error: Cannot find respective subset of {p}"
+            if k is None and verbose:
+                print(f"Error: Cannot find respective subset of {next_p}")
+                continue
+
             C[k] += 1
             samples += +1
             if samples % c == 0:
