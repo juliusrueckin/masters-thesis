@@ -265,12 +265,15 @@ class Partition:
             ]
         )
 
-    def plot_partition(self):
+    def plot_partition(self, file_path: str = None):
         """
         Plots square with side length of magnitude identical to the identification constants of the cosets that
         make up the torus of the dynamic system. If already calculated, it also plots the stable and unstable
         branches of the Markov partition of the given dynamic system as well as the branch intersection points
         and the dynamic system's hyperbolic fixed point.
+
+        Args:
+            file_path (str): if not None, then plot is stored to disk
         """
         m_id = self.dynamic_system.m_id
         unit_square = np.array([[0, 0], [0, m_id], [m_id, m_id], [m_id, 0], [0, 0]])
@@ -285,5 +288,8 @@ class Partition:
 
             intersection_points = np.array(self.intersection_points)
             plt.plot(intersection_points[:, 0], intersection_points[:, 1], "go")
+
+        if file_path is not None:
+            plt.savefig(file_path, dpi=600)
 
         plt.show()
