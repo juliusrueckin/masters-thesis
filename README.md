@@ -84,7 +84,3 @@ application to some fixed policy evaluation step.
 2. `docker-compose build`
 3. `docker-compose up`
 4. Open jupyterlab link printed in terminal in a browser of your choice and start exploring the notebooks
-
-### Presentation of Thesis Results
-
-An extended presentation of the theoretical, algorithmical and experimental work carried out in this thesis can be found [over here.](https://docs.google.com/presentation/d/1pbK4_ac4LFXKli0opt8VTar8cc7b4QRxTLHrpihlT-k/edit?usp=sharing)
