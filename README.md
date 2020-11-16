@@ -4,11 +4,40 @@
 
 ### Abstract
 
-Investigation and understanding of nonlinear dynamic systems are crucial in various applications and fields of research as describing chaotic systems in physics~\cite{infeld2000nonlinear}, comprehend bio-molecular processes for designing new medial drugs~\cite{alonso2006combining} or in engineering as for developing new high-performance materials~\cite{porter2015granular}. Simultaneously, such systems' global dynamics are notoriously hard to represent, although differential equations to describe such systems are well-known in some cases. A standard tool for analyzing dynamic behavior over time are dynamic simulations~\cite{de2012kinematic}. However, these techniques often suffer from a very high dimensional data space resulting in enormous effort to create suitable dimensionality reduction methods \cite{hummer2015optimal} \cite{nagel2019dynamical}. \newline
+Investigation and understanding of nonlinear dynamic systems are crucial
+in various applications and fields of research as describing chaotic
+systems in physics , comprehend bio-molecular processes for designing
+new medial drugs  or in engineering as for developing new
+high-performance materials . Simultaneously, such systems’ global
+dynamics are notoriously hard to represent, although differential
+equations to describe such systems are well-known in some cases. A
+standard tool for analyzing dynamic behavior over time are dynamic
+simulations . However, these techniques often suffer from a very high
+dimensional data space resulting in enormous effort to create suitable
+dimensionality reduction methods .
 
-Hence, we investigate a practical and efficient tool to describe and analyze complex dynamic systems, namely symbolic dynamics \cite{lind1995introduction}. We derive symbolic dynamic systems by representing the phase spaces as partitions endowed with the Markov property, called Markov partitions. Such phase space discretizations facilitate analyzing and computing global dynamics. Further, they make dynamic systems accessible to optimal sequential decision-making algorithms. Thus, we extend the work of \cite{franceschini1985constructing} to bridge a substantial gap in research work by developing algorithms to construct Markov partitions for various dynamic systems automatically. Further, we formalize and implement a framework to build Markov decision processes for dynamic systems based on Markov partitions. We show how to fuse our work with approximate dynamic programming and apply this fused framework in experiments executed in dynamic system environments. \newline
+Hence, we investigate a practical and efficient tool to describe and
+analyze complex dynamic systems, namely symbolic dynamics . We derive
+symbolic dynamic systems by representing the phase spaces as partitions
+endowed with the Markov property, called Markov partitions. Such phase
+space discretizations facilitate analyzing and computing global
+dynamics. Further, they make dynamic systems accessible to optimal
+sequential decision-making algorithms. Thus, we extend the work of to
+bridge a substantial gap in research work by developing algorithms to
+construct Markov partitions for various dynamic systems automatically.
+Further, we formalize and implement a framework to build Markov decision
+processes for dynamic systems based on Markov partitions. We show how to
+fuse our work with approximate dynamic programming and apply this fused
+framework in experiments executed in dynamic system environments.
 
-Moreover, our experiments with Markov partitions provide evidence for superior convergence performance of iterative Monte Carlo based policy evaluation algorithms compared to regular grid-like discretizations. However, we also experience mathematically inherent limits while constructing Markov partitions for a broad class of dynamic systems. Additionally, it is not clear how to entirely transport Markov partitions' topological and measure-theoretic properties beyond the application to some fixed policy evaluation step.
+Moreover, our experiments with Markov partitions provide evidence for
+superior convergence performance of iterative Monte Carlo based policy
+evaluation algorithms compared to regular grid-like discretizations.
+However, we also experience mathematically inherent limits while
+constructing Markov partitions for a broad class of dynamic systems.
+Additionally, it is not clear how to entirely transport Markov
+partitions’ topological and measure-theoretic properties beyond the
+application to some fixed policy evaluation step.
 
 ### Project Structure
 
