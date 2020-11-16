@@ -4,7 +4,11 @@ papers/
 project_plan/
 templates/
 thesis/
-experimental/notebooks/results/
 .idea/
 *__pycache__*
 *.env
+plots/
+experimental/notebooks/results/partitions/
+experimental/notebooks/results/monte_carlo_pi_example/
+experimental/notebooks/results/convergence_latex_tables/
+
