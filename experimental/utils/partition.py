@@ -145,7 +145,9 @@ class Partition:
 
         return intersection_points[msk][0]
 
-    def compute_partition(self, num_iters: int, delta: float) -> Tuple[Optional[Dict], Optional[List]]:
+    def compute_partition(
+        self, num_iters: int, delta: float, make_snapshots: bool = False
+    ) -> Tuple[Optional[Dict], Optional[List]]:
         """
         Computes a Markov partition for the given dynamic system by tracing stable and unstable manifolds in
         the hyperbolic fixed point in parallel and checking for their points of intersection. This procedure
@@ -188,6 +190,8 @@ class Partition:
             "W_s2": (self.wt_s, False),
         }
         overall_intersection_points = []
+
+        snapshot_path = "/ma_project/experimental/notebooks/results/partitions"
 
         for i in range(num_iters):
             print(f"ITERATION: {i+1}")
@@ -238,6 +242,16 @@ class Partition:
                                 stopped_branches.append(latter_branch)
                                 print(f"Stop {latter_branch} at {intersection_point}.")
                                 overall_intersection_points.append(intersection_point)
+                                self.intersection_points = overall_intersection_points
+
+                                if make_snapshots:
+                                    self.plot_partition(
+                                        branches=branches,
+                                        file_path=f"{snapshot_path}/snapshot-{i}-{len(stopped_branches)}.png",
+                                    )
+
+            if make_snapshots:
+                self.plot_partition(branches=branches, file_path=f"{snapshot_path}/snapshot-{i}-total.png")
 
         self.branches = branches
         self.intersection_points = overall_intersection_points
@@ -265,7 +279,7 @@ class Partition:
             ]
         )
 
-    def plot_partition(self, file_path: str = None):
+    def plot_partition(self, branches: Dict = None, file_path: str = None):
         """
         Plots square with side length of magnitude identical to the identification constants of the cosets that
         make up the torus of the dynamic system. If already calculated, it also plots the stable and unstable
@@ -274,18 +288,23 @@ class Partition:
 
         Args:
             file_path (str): if not None, then plot is stored to disk
+            branches (dict): contains all traced branches
         """
+        if branches is None:
+            branches = self.branches
+
         m_id = self.dynamic_system.m_id
         unit_square = np.array([[0, 0], [0, m_id], [m_id, m_id], [m_id, 0], [0, 0]])
         plt.plot(unit_square[:, 0], unit_square[:, 1], "r-")
 
-        if self.branches is not None and self.intersection_points is not None:
-            for branch in self.branches.keys():
-                for line in MultiLineString(self.branches[branch]):
+        if branches is not None:
+            for branch in branches.keys():
+                for line in MultiLineString(branches[branch]):
                     plt.plot(np.array(line.coords[:])[:, 0], np.array(line.coords[:])[:, 1], "b-")
 
             plt.plot(self.dynamic_system.fixed_point[0], self.dynamic_system.fixed_point[1], "yo")
 
+        if self.intersection_points is not None:
             intersection_points = np.array(self.intersection_points)
             plt.plot(intersection_points[:, 0], intersection_points[:, 1], "go")
 
